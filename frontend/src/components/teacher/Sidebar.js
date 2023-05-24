@@ -16,7 +16,13 @@ const TeacherSidebar = () => {
           Add Courses
         </ListGroup.Item>
         <ListGroup.Item as={Link} to="/teacher-users">
-          User List
+          My User
+        </ListGroup.Item>
+        <ListGroup.Item as={Link} to="/quiz">
+          Quiz
+        </ListGroup.Item>
+        <ListGroup.Item as={Link} to="/add-quiz">
+          Add Quiz
         </ListGroup.Item>
         <ListGroup.Item as={Link} to="/teacher-profile-setting">
           Profile Setting

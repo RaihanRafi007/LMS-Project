@@ -19,6 +19,9 @@ import Layout from "../../../hocs/Layout";
 const EditCourse = () => {
   const baseUrl = "http://127.0.0.1:8000/api/";
   const [cats, setCats] = useState([]);
+  
+  const teacherId = localStorage.getItem("teacherId");
+  console.log(teacherId)
 
   const [courseData, setCourseData] = useState({
     category: "",
@@ -74,7 +77,7 @@ const EditCourse = () => {
   const submitHandler = () => {
     const formData = new FormData();
     formData.append("category", courseData.category);
-    formData.append("teacher", 1);
+    formData.append("teacher", teacherId);
     formData.append("title", courseData.title);
     formData.append("description", courseData.description);
     if (courseData.f_img !== "") {

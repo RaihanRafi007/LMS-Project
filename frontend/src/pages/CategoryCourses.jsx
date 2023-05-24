@@ -2,7 +2,7 @@ import { faArrowRightLong } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, Row, Pagination } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
 import Paginations from "../components/pagination/Pagination";
 import Layout from "../hocs/Layout";
@@ -10,31 +10,39 @@ import logo from "../logo.svg";
 
 const CategoryCourses = () => {
   const baseUrl = "http://127.0.0.1:8000/api/";
+  const [nextUrl, setNextUrl] = useState();
+  const [previousUrl, setPreviousUrl] = useState();
 
   const [courseData, setCourseData] = useState([]);
 
-  let { category_slug } = useParams();
+  let { category_id, category_slug } = useParams();
 
   useEffect(() => {
+    fetchData(baseUrl + `course/?category=${category_id}`);
+    // setCourseData(data);
+  }, [category_id]);
+
+  const paginationHandler = (url) => {
+    fetchData(url);
+  };
+  function fetchData(url) {
     try {
-      axios
-        .get(baseUrl + `course/?category=${category_slug}`)
-        .then((response) => {
-          console.log(response.data);
-          setCourseData(response.data);
-        });
+      axios.get(url).then((res) => {
+        // console.log(response.data);
+        setPreviousUrl(res.data.previous);
+        setNextUrl(res.data.next);
+        setCourseData(res.data.results);
+      });
     } catch (error) {
       console.log(error);
     }
-    // setChapterData(data);
-  }, [category_slug]);
+  }
 
   return (
     <Layout>
       <Container>
         <Row>
           <h3 className="mb-4 mt-4">{category_slug}</h3>
-
           {courseData &&
             courseData.map((course, index) => (
               <Col className="d-flex">
@@ -57,8 +65,34 @@ const CategoryCourses = () => {
                 </Card>
               </Col>
             ))}
+     
+        </Row>
+        <Row>
+          <Col className="mt-2 d-flex justify-content-center">
+            {previousUrl && (
+              <Pagination>
+                {" "}
+                {/* <Button
+                type="button"
+                size="sm"
+                className="me-1"
+                onClick={() => paginationHandler(previousUrl)}
+              >
+                <Pagination.Prev />
+              </Button> */}
+                <Pagination.Prev
+                  className="me-1"
+                  onClick={() => paginationHandler(previousUrl)}
+                />
+              </Pagination>
+            )}
 
-          {/* <Paginations /> */}
+            {nextUrl && (
+              <Pagination>
+                <Pagination.Next onClick={() => paginationHandler(nextUrl)} />
+              </Pagination>
+            )}
+          </Col>
         </Row>
       </Container>
     </Layout>

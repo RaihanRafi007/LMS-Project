@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import Layout from "../../hocs/Layout";
-import { faYoutube } from "@fortawesome/free-brands-svg-icons";
+import {
+  faAmazonPay,
+  faChrome,
+  faFacebook,
+  faGithub,
+  faLinkedin,
+} from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Badge,
@@ -38,6 +44,10 @@ const TeacherDetail = () => {
     // setChapterData(data);
   }, [teacher_id]);
 
+  const icon_style = {
+    "font-size": "20px",
+  };
+
   return (
     <Layout>
       <Container>
@@ -52,7 +62,11 @@ const TeacherDetail = () => {
               Skills: &nbsp;
               {skillList &&
                 skillList.map((skill, index) => (
-                  <Link to={`/teacher-skill-courses/${skill.trim()}/${teacherData.id}`}>
+                  <Link
+                    to={`/teacher-skill-courses/${skill.trim()}/${
+                      teacherData.id
+                    }`}
+                  >
                     <Badge bg="secondary">{skill.trim()}</Badge>
                   </Link>
                 ))}
@@ -60,7 +74,30 @@ const TeacherDetail = () => {
             <p className="fw-bold">
               Recent Course: <Link to="/teacher-detail/1">ReactJs Course</Link>
             </p>
-            <p className="fw-bold">Rating: 4.5/5</p>
+            {teacherData.facebook_url && (
+              <a style={icon_style} href={teacherData.facebook_url}>
+                {" "}
+                <FontAwesomeIcon icon={faFacebook} />{" "}
+              </a>
+            )}
+            {teacherData.linkedin_url && (
+              <a style={icon_style} href={teacherData.linkedin_url}>
+                {" "}
+                <FontAwesomeIcon className="ms-1" icon={faLinkedin} />{" "}
+              </a>
+            )}
+            {teacherData.github_url && (
+              <a style={icon_style} href={teacherData.github_url}>
+                {" "}
+                <FontAwesomeIcon className="ms-1" icon={faGithub} />{" "}
+              </a>
+            )}
+            {teacherData.website_url && (
+              <a style={icon_style} href={teacherData.website_url}>
+                {" "}
+                <FontAwesomeIcon className="ms-1" icon={faChrome} />{" "}
+              </a>
+            )}
           </Col>
         </Row>
         {/* Course Videos */}
@@ -78,61 +115,6 @@ const TeacherDetail = () => {
               ))}
           </ListGroup>
         </Card>
-        {/* Course Videos End*/}
-        {/* Related Courses  */}
-        {/* <Row>
-        <h4 className="mt-4">Related Courses</h4>
-
-        <Col className="d-flex">
-          <Card className="mt-3" style={{ width: "18rem" }}>
-            <Card.Img variant="top" src={logo} />
-            <Card.Body>
-              <Card.Title>
-                <Link to="detail/1"> Course Title</Link>
-              </Card.Title>
-              <Card.Text>
-                Some quick example text to build on the card title and make up
-                the bulk of the card's content.
-              </Card.Text>
-              <Button variant="primary">Go somewhere</Button>
-            </Card.Body>
-          </Card>
-          <Card className="mt-3" style={{ width: "18rem" }}>
-            <Card.Img variant="top" src={logo} />
-            <Card.Body>
-              <Card.Title>Course Title</Card.Title>
-              <Card.Text>
-                Some quick example text to build on the card title and make up
-                the bulk of the card's content.
-              </Card.Text>
-              <Button variant="primary">Go somewhere</Button>
-            </Card.Body>
-          </Card>
-          <Card className="mt-3" style={{ width: "18rem" }}>
-            <Card.Img variant="top" src={logo} />
-            <Card.Body>
-              <Card.Title>Course Title</Card.Title>
-              <Card.Text>
-                Some quick example text to build on the card title and make up
-                the bulk of the card's content.
-              </Card.Text>
-              <Button variant="primary">Go somewhere</Button>
-            </Card.Body>
-          </Card>
-          <Card className="mt-3" style={{ width: "18rem" }}>
-            <Card.Img variant="top" src={logo} />
-            <Card.Body>
-              <Card.Title>Course Title</Card.Title>
-              <Card.Text>
-                Some quick example text to build on the card title and make up
-                the bulk of the card's content.
-              </Card.Text>
-              <Button variant="primary">Go somewhere</Button>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row> */}
-        {/* Related Courses End */}
       </Container>
     </Layout>
   );

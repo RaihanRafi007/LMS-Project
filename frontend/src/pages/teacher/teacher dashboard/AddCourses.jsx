@@ -27,13 +27,23 @@ const TeacherAddCourses = () => {
     techs: "",
   });
 
-  const { data: categories = [], isLoading, isError } = useGetCategoriesQuery();
+  // const { data: categories = [], isLoading, isError } = useGetCategoriesQuery();
 
   // Fetch categories when page load
+  // useEffect(() => {
+  //   setCats(categories);
+  // }, [categories]);
+  // console.log(cats);
+
   useEffect(() => {
-    setCats(categories);
-  }, [cats, categories]);
-  console.log(cats);
+    try {
+      axios.get(baseUrl + "category/").then((response) => {
+        setCats(response.data);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   const handleChange = (e) => {
     setCourseData({
@@ -52,9 +62,11 @@ const TeacherAddCourses = () => {
   };
 
   const submitHandler = () => {
+    const teacherId = localStorage.getItem("teacherId");
+
     const formData = new FormData();
     formData.append("category", courseData.category);
-    formData.append("teacher", 1);
+    formData.append("teacher", teacherId);
     formData.append("title", courseData.title);
     formData.append("description", courseData.description);
     formData.append("feature_img", courseData.f_img, courseData.f_img.name);
@@ -69,6 +81,7 @@ const TeacherAddCourses = () => {
         })
         .then((response) => {
           console.log(response.data);
+          window.location.href = "/add-courses";
         });
     } catch (error) {
       console.log(error);
@@ -96,7 +109,9 @@ const TeacherAddCourses = () => {
                   >
                     <option>Open this select menu</option>
                     {cats.map((cat, index) => (
-                      <option key={index} value={cat.id}>{cat.title}</option>
+                      <option key={index} value={cat.id}>
+                        {cat.title}
+                      </option>
                     ))}
                   </Form.Select>
 

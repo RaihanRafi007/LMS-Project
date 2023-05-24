@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { useLoginTeacherMutation } from "../../app/techers/teacherApi";
 import Layout from "../../hocs/Layout";
+import { Link, useNavigate } from "react-router-dom";
 
 const TeacherLogin = () => {
   const baseUrl = "http://127.0.0.1:8000/api/teacher/login/";
   const [errorMsg, setErrorMsg] = useState("");
+  const navigate = useNavigate();
 
   const [teacherLoginData, setTeacherLoginData] = useState({
     email: "",
@@ -65,20 +67,22 @@ const TeacherLogin = () => {
       .then(function (response) {
         console.log(response);
         if (response.data.bool === true) {
-          localStorage.setItem("teacherLoginStatus", true);
-          localStorage.setItem("teacherId", response.data.teacher_id);
+          if (response.data.login_via_otp === true) {
+            // window.location.href = `/varify-teacher/${response.data.teacher_id}`;
 
-          window.location.href = "/teacher-dashboard";
+            window.location.href =
+              "/varify-teacher/" + response.data.teacher_id;
 
-          // userContext.login(true)
-          console.log(response.data);
+            // navigate(`/varify-teacher/${response.data.id}` );
+          } else {
+            localStorage.setItem("teacherLoginStatus", true);
+            localStorage.setItem("teacherId", response.data.teacher_id);
+            window.location.href = "/teacher-dashboard";
+            // navigate("/teacher-dashboard/");
+            console.log(response.data);
+          }
         } else {
-          // console.log(response.data);
-          // localStorage.setItem("customer_id", response.data.id);
-          // localStorage.setItem("customer_login", true);
-          // localStorage.setItem("customer_username", response.data.user);
-          // setFormError(false);
-          setErrorMsg("Invalid Username or Password.");
+          setErrorMsg(response.data.msg);
         }
       })
       .catch(function (error) {
@@ -91,6 +95,10 @@ const TeacherLogin = () => {
   if (teacherLoginStatus === "true") {
     window.location.href = "/teacher-dashboard";
   }
+
+  useEffect(() => {
+    document.title = "Teacher Login";
+  }, []);
 
   const handleChange = (e) => {
     setTeacherLoginData({
@@ -146,6 +154,9 @@ const TeacherLogin = () => {
                   <Button variant="primary" type="submit" disabled={isLoading}>
                     {isLoading ? "Loading..." : "Login"}
                   </Button>
+                  <p className="mt-2 text-danger">
+                    <Link className="text-danger" to="/teacher-forgot-password">Forgot Password?</Link>
+                  </p>
                 </Form>
               </Card.Body>
             </Card>

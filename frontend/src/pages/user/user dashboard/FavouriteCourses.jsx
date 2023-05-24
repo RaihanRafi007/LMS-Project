@@ -1,10 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Sidebar from "../../../components/user/Sidebar";
 import Layout from "../../../hocs/Layout";
+import axios from "axios";
 
-const FavouriteCourses = () => {
+const FavourtieCourses = () => {
+  const baseUrl = "http://127.0.0.1:8000/api/";
+  const [courseData, setCourseData] = useState([]);
+
+  const studentId = localStorage.getItem("studentId");
+  console.log(studentId);
+  // const { data, isLoading, error } = useGetcoursesQuery();
+
+  // fatch courses when page is loaded
+  useEffect(() => {
+    try {
+      axios
+        .get(baseUrl + `fetch-favourite-courses/${studentId}`)
+        .then((response) => {
+          console.log(response.data);
+          setCourseData(response.data);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+    // setcourseData(data);
+  }, [studentId]);
+
   return (
     <Layout>
       <Container>
@@ -14,26 +37,30 @@ const FavouriteCourses = () => {
           </Col>
           <Col md="7">
             <Card>
-              <Card.Header>Favourite Courses</Card.Header>
+              <Card.Header>Favourtie Courses</Card.Header>
               <Card.Body>
                 <Table striped bordered hover variant="dark">
                   <thead>
                     <tr>
-                      <th>Home</th>
+                      <th>Name</th>
                       <th>Created By</th>
-                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>Php Development</td>
-                      <td>
-                        <Link to="#">Rafi</Link>
-                      </td>
-                      <td>
-                        <Button variant="danger">Delete</Button>{" "}
-                      </td>
-                    </tr>
+                    {courseData.map((row, index) => (
+                      <tr>
+                        <td>
+                          <Link to={`/detail/${row.course.id}`}>
+                            {row.course.title}
+                          </Link>
+                        </td>
+                        <td>
+                          <Link to={`/teacher-detail/${row.course.teacher.id}`}>
+                            {row.course.teacher.full_name}
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </Table>
               </Card.Body>
@@ -45,4 +72,4 @@ const FavouriteCourses = () => {
   );
 };
 
-export default FavouriteCourses;
+export default FavourtieCourses;

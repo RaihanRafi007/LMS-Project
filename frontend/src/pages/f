@@ -1,1 +1,0 @@
-"[{\"model\": \"main.course\", \"pk\": 12, \"fields\": {\"category\": 1, \"teacher\": 1, \"title\": \"Python\", \"description\": \"THis is Python\", \"feature_img\": \"course_img/1679030219772_3zekoUu.jpeg\", \"techs\": \"django, DRF\"}}]"

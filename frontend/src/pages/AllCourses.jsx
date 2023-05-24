@@ -2,27 +2,48 @@ import { faArrowRightLong } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Container, Image, Row } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Image,
+  Pagination,
+  Row,
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Paginations from "../components/pagination/Pagination";
 import Layout from "../hocs/Layout";
 import logo from "../logo.svg";
 
 const AllCourses = () => {
-  const baseUrl = "http://127.0.0.1:8000/api/";
+  const baseUrl = "http://127.0.0.1:8000/api/course/";
+
+  // const [apiUrl, setApiUrl] = useState(baseUrl);
+  const [nextUrl, setNextUrl] = useState();
+  const [previousUrl, setPreviousUrl] = useState();
   const [courseData, setCourseData] = useState([]);
 
   useEffect(() => {
+    fetchData(baseUrl);
+    // setCourseData(data);
+  }, [baseUrl]);
+
+  const paginationHandler = (url) => {
+    fetchData(url);
+  };
+  function fetchData(url) {
     try {
-      axios.get(baseUrl + "course/").then((response) => {
+      axios.get(url).then((res) => {
         // console.log(response.data);
-        setCourseData(response.data);
+        setPreviousUrl(res.data.previous);
+        setNextUrl(res.data.next);
+        setCourseData(res.data.results);
       });
     } catch (error) {
       console.log(error);
     }
-    // setCourseData(data);
-  }, []);
+  }
 
   console.log(courseData);
   // console.log(courseData.feature_img);
@@ -54,8 +75,33 @@ const AllCourses = () => {
                 </Card>
               </Col>
             ))}
+        </Row>
+        <Row>
+          <Col className="mt-2 d-flex justify-content-center">
+            {previousUrl && (
+              <Pagination>
+                {" "}
+                {/* <Button
+                type="button"
+                size="sm"
+                className="me-1"
+                onClick={() => paginationHandler(previousUrl)}
+              >
+                <Pagination.Prev />
+              </Button> */}
+                <Pagination.Prev
+                  className="me-1"
+                  onClick={() => paginationHandler(previousUrl)}
+                />
+              </Pagination>
+            )}
 
-          <Paginations />
+            {nextUrl && (
+              <Pagination>
+                <Pagination.Next onClick={() => paginationHandler(nextUrl)} />
+              </Pagination>
+            )}
+          </Col>
         </Row>
       </Container>
     </Layout>

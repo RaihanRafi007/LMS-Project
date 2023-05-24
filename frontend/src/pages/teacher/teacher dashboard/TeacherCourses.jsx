@@ -43,10 +43,10 @@ const TeacherCourses = () => {
     <Layout>
       <Container>
         <Row>
-          <Col className="mb-2" md="5">
+          <Col className="mb-2" md="3">
             <TeacherSidebar />
           </Col>
-          <Col md="7">
+          <Col  md="9">
             <Card>
               <Card.Header>My Courses</Card.Header>
               <Card.Body>
@@ -68,6 +68,12 @@ const TeacherCourses = () => {
                           <Link to={`/all-chapters/` + course.id}>
                             {course.title}
                           </Link>{" "}
+                          <hr />
+                          {course.course_rating ? (
+                            <span>Rating: {course.course_rating}/5 </span>
+                          ) : (
+                            <span>Rating: 0/5</span>
+                          )}
                         </td>
                         <td>
                           <Image
@@ -78,22 +84,36 @@ const TeacherCourses = () => {
                           />
                         </td>
                         <td>
-                          123
-                          {/* <Link to="#">{course.teacher.full_name}</Link> */}
+                          <Link to={`/enrolled-students/${course.id}`}>
+                            {" "}
+                            {course.total_enrolled_students}
+                          </Link>
                         </td>
                         <td>
                           <Button
                             as={Link}
                             to={`/edit-course/${course.id}`}
-                            variant="info"
+                            variant="warning"
+                            className="mt-1 ms-1"
                           >
                             Edit
                           </Button>{" "}
-                          <Button as={Link} to="" variant="danger">
+                          <Button
+                            as={Link}
+                            to={`/study-materials/${course.id}`}
+                            variant="info"
+                            className="mt-1 ms-1"
+                          >
+                           Study Material
+                          </Button>{" "}
+                          <Button className="mt-1 ms-1"  size="sm" as={Link} to="" variant="danger">
                             Delete
                           </Button>{" "}
-                          <Button as={Link} to={`/add-chapter/${course.id}`}>
+                          <Button className="mt-1 ms-1" size="sm" as={Link} to={`/add-chapter/${course.id}`}>
                             Add Chapter
+                          </Button>
+                          <Button className="mt-1 ms-1" variant="success" size="sm" as={Link} to={`/assign-quiz/${course.id}`}>
+                            Assign Quiz
                           </Button>
                         </td>
                       </tr>

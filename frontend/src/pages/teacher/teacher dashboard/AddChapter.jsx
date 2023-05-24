@@ -13,6 +13,7 @@ import { Link, useParams } from "react-router-dom";
 import TeacherSidebar from "../../../components/teacher/Sidebar";
 
 import Layout from "../../../hocs/Layout";
+import Swal from "sweetalert2";
 
 const TeacherAddChapter = () => {
   const baseUrl = "http://127.0.0.1:8000/api/";
@@ -27,6 +28,8 @@ const TeacherAddChapter = () => {
     remarks: "",
   });
 
+  const [videoDuration, setVideoDuration] = useState();
+
   const handleChange = (e) => {
     setChapterData({
       ...chapterData,
@@ -37,6 +40,15 @@ const TeacherAddChapter = () => {
   // console.log(handleChange);
 
   const handleFileChange = (e) => {
+    window.URL = window.URL || window.webkitURL;
+    var video = document.createElement("video");
+    video.preload = "metadata";
+    video.onloadedmetadata = function () {
+      window.URL.revokeObjectURL(video.src);
+      setVideoDuration(video.duration);
+    };
+    video.src = URL.createObjectURL(e.target.files[0]);
+
     setChapterData({
       ...chapterData,
       [e.target.name]: e.target.files[0],
@@ -53,19 +65,54 @@ const TeacherAddChapter = () => {
 
     try {
       axios
-        .post(baseUrl + "chapter/", formData, {
+        .post(baseUrl + "course-chapters/" + course_id, formData, {
           headers: {
             "content-type": "multipart/form-data",
           },
         })
         .then((response) => {
           // console.log(response.data);
-          window.location.href = "/add-chapter/1";
+          if (response.status === 200 || response.status === 201) {
+            Swal.fire({
+              title: "Data has been added.",
+              icon: "success",
+              toast: true,
+              timer: 10000,
+              position: "top-right",
+              timerProgressBar: true,
+              showConfirmButton: false,
+            });
+          }
+          window.location.reload();
         });
     } catch (error) {
       console.log(error);
     }
   };
+
+  // const submitHandler = () => {
+  //   const formData = new FormData();
+  //   formData.append("course", course_id);
+  //   formData.append("title", chapterData.title);
+  //   formData.append("description", chapterData.description);
+  //   formData.append("video", chapterData.video, chapterData.video.name);
+  //   formData.append("remarks", chapterData.remarks);
+
+  //   try {
+  //     axios
+  //       .post(baseUrl + "chapter/", formData, {
+  //         headers: {
+  //           "content-type": "multipart/form-data",
+  //         },
+  //       })
+  //       .then((response) => {
+  //         // console.log(response.data);
+  //         window.location.href = "/add-chapter/1";
+  //       });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   return (
     <Layout>

@@ -1,8 +1,70 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
+// import { useLoginTeacherMutation } from "../../app/techers/teacherApi";
 import Layout from "../../hocs/Layout";
+import { Link } from "react-router-dom";
 
 const Login = () => {
+  const baseUrl = "http://127.0.0.1:8000/api/student/login/";
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const [studentLoginData, setStudentLoginData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const submitHandler = (e) => {
+    const formData = new FormData();
+    formData.append("email", studentLoginData.email);
+    formData.append("password", studentLoginData.password);
+
+    axios
+      .post(baseUrl, formData)
+      .then(function (response) {
+        console.log(response);
+        if (response.data.bool === true) {
+          if (response.data.login_via_otp === true) {
+            // window.location.href = `/varify-student/${response.data.student_id}`;
+
+            window.location.href =
+              "/varify-student/" + response.data.student_id;
+
+            // navigate(`/varify-student/${response.data.id}` );
+          } else {
+            localStorage.setItem("studentLoginStatus", true);
+            localStorage.setItem("studentId", response.data.student_id);
+            window.location.href = "/student-dashboard";
+            // navigate("/student-dashboard/");
+            console.log(response.data);
+          }
+        } else {
+          setErrorMsg(response.data.msg);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    console.log(formData);
+  };
+
+  const studentLoginStatus = localStorage.getItem("studentLoginStatus");
+  if (studentLoginStatus === "true") {
+    window.location.href = "/student-dashboard";
+  }
+
+  useEffect(() => {
+    document.title = "Student Login";
+  }, []);
+
+  const handleChange = (e) => {
+    setStudentLoginData({
+      ...studentLoginData,
+      [e.target.name]: e.target.value,
+    });
+  };
+  console.log(studentLoginData);
+
   return (
     <Layout>
       <Container>
@@ -13,17 +75,17 @@ const Login = () => {
                 Login
               </Card.Header>
               <Card.Body>
-                {/* {formError && <p className="text-danger">{errorMsg}</p>} */}
+                {errorMsg && <p className="text-danger">{errorMsg}</p>}
 
-                <Form>
-                  <Form.Group className="mb-3" controlId="formBasicUsername">
-                    <Form.Label>Username</Form.Label>
+                <Form onSubmit={submitHandler}>
+                  <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Label>Email address</Form.Label>
                     <Form.Control
-                      name="username"
-                      // value={loginFormData.username}
-                      // onChange={inputHandler}
-                      type="text"
-                      placeholder="Enter your Username"
+                      name="email"
+                      value={studentLoginData.email}
+                      onChange={handleChange}
+                      type="email"
+                      placeholder="Enter email"
                       required
                     />
                     {/* <Form.Text className="text-muted">
@@ -35,24 +97,18 @@ const Login = () => {
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       name="password"
-                      // value={loginFormData.password}
-                      // onChange={inputHandler}
+                      value={studentLoginData.password}
+                      onChange={handleChange}
                       type="password"
                       placeholder="Password"
                       required
                     />
                   </Form.Group>
-                  {/* <Form.Group className="mb-3" controlId="formBasicCheckbox">
-              <Form.Check type="checkbox" label="Check me out" />
-            </Form.Group> */}
-                  <Button
-                    //   disabled={!loginFormData.username || !loginFormData.password}
-                    variant="primary"
-                    type="button"
-                    //   onClick={submitHandler}
-                  >
-                    Login
-                  </Button>
+
+                  <Button type="submit">Login</Button>
+                  <p className="mt-2 text-danger">
+                    <Link className="text-danger" to="/user-forgot-password">Forgot Password?</Link>
+                  </p>
                 </Form>
               </Card.Body>
             </Card>
